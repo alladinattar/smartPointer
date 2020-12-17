@@ -29,19 +29,14 @@ string(APPEND CMAKE_CXX_FLAGS " -Wshadow -Wnon-virtual-dtor")
 hunter_add_package(GTest)
 find_package(GTest CONFIG REQUIRED)
 
-add_library(${PROJECT_NAME} STATIC
-        # enum your files and delete this comment
-        ${CMAKE_CURRENT_SOURCE_DIR}/sources/source.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/header.hpp
+add_library(template INTERFACE
         )
 add_executable(tests
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/test.cpp
-        sources/source.cpp include/header.hpp
-        sources/source.cpp
         )
 
-target_include_directories(template
-        PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+target_include_directories(template INTERFACE
+         ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 
@@ -60,7 +55,7 @@ if(BUILD_COVERAGE)
     find_package(codecov)
     # TODO: change template word to project name and delete this comment
     #add_coverage(template)
-    #add_coverage(tests)
+    add_coverage(tests)
     list(APPEND LCOV_REMOVE_PATTERNS "'${PROJECT_SOURCE_DIR}/tests/*'")
     #coverage_evaluate()
 endif()
