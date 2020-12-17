@@ -10,18 +10,20 @@ class SharedPtr {
 
  public:
   SharedPtr() : pointerToObject{nullptr}, counter(nullptr){};
-  SharedPtr(T* ptr) : pointerToObject{ptr}, counter(new std::atomic<uint>) {
+  explicit SharedPtr(T* ptr) : pointerToObject{ptr}, counter(new std::atomic_uint) {
     *counter = 1;
   };
   SharedPtr(const SharedPtr& r)
-      : pointerToObject(r.pointerToObject), counter(r.counter){++(*counter)};
+      : pointerToObject(r.pointerToObject), counter(r.counter){++(*counter);};
   SharedPtr(SharedPtr&& r)
-      : pointerToObject(r.pointerToObject), counter(r.counter){++(*counter)};
+        : pointerToObject(r.pointerToObject), counter(r.counter){++(*counter);};
   ~SharedPtr() {
-    if (counter == 1) {
-      delete counter counter = nullptr pointerToObject = nullptr
+    if (*counter == 1) {
+      delete counter;
+      counter = nullptr;
+      pointerToObject = nullptr;
     } else {
-      --(*counter)
+      --(*counter);
     }
   };
   auto operator=(const SharedPtr& r) -> SharedPtr& {
@@ -44,15 +46,15 @@ class SharedPtr {
   };
 
   // проверяет, указывает ли указатель на объект
-  operator bool() const {
+  explicit operator bool() const {
     if (pointerToObject == nullptr) {
       return false;
     } else {
       return true;
     }
   };
-  auto operator*() const -> T& { return *get(); };
-  auto operator->() const -> T* { return get(); };
+  auto operator*() const -> T& { return *pointerToObject; };
+  auto operator->() const -> T* { return pointerToObject; };
 
   auto get() -> T* { return pointerToObject; };
   void reset() {
@@ -71,9 +73,9 @@ class SharedPtr {
     if (counter != nullptr) {
       --(*counter);
     }
-    counter = new std::atomic<uint>;
+    counter = new std::atomic_uint;
     *counter = 1;
-    pointerToObject = ptr
+    pointerToObject = ptr;
   };
   void swap(SharedPtr& r){
       SharedPtr<T> temp(r);
@@ -82,6 +84,6 @@ class SharedPtr {
   };
   // возвращает количество объектов SharedPtr, которые ссылаются на тот же
   // управляемый объект
-  auto use_count() const -> size_t{return *counter};
+  auto use_count() const -> std::size_t{return *counter;};
 };
 #endif  // INCLUDE_HEADER_HPP_
