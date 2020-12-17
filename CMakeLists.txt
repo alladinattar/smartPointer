@@ -31,13 +31,16 @@ find_package(GTest CONFIG REQUIRED)
 
 add_library(template INTERFACE
         )
+target_include_directories(template INTERFACE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        )
 add_executable(tests
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/test.cpp
         )
+target_include_directories(tests
+        PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+        )
 
-target_include_directories(template INTERFACE
-         ${CMAKE_CURRENT_SOURCE_DIR}/include
-)
 
 
 target_link_libraries(tests ${PROJECT_NAME} GTest::gtest_main)
